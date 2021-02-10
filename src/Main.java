@@ -24,6 +24,5 @@ public class Main {
             score += solver.scoreOf(word);
         }
         StdOut.println("Score = " + score);
-
     }
 }

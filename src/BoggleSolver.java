@@ -50,8 +50,8 @@ public class BoggleSolver
             if(b.search(str)<str.length()) queue.enqueue(word);
         }
 
-        System.out.println(dictionary.length);
-        System.out.println(count);
+//        System.out.println(dictionary.length);
+//        System.out.println(count);
 
         return queue;
     }
