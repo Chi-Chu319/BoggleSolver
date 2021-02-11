@@ -1,7 +1,8 @@
-import edu.princeton.cs.algs4.BoyerMoore;
 import edu.princeton.cs.algs4.Queue;
+import edu.princeton.cs.algs4.Quick3string;
+import edu.princeton.cs.algs4.TrieSET;
+
 import java.util.ArrayList;
-import java.util.HashSet;
 
 
 public class BoggleSolver
@@ -9,7 +10,7 @@ public class BoggleSolver
 
     private int n;
     private int m;
-    private boolean[] radix = new boolean[256];
+    private int[] radix = new int[256];
     private String[] dictionary;
     private BoggleBoard board;
 
@@ -30,24 +31,39 @@ public class BoggleSolver
         this.board = board;
         for(int i = 0; i<m;i++){
             for(int j = 0; j<n;j++) {
-                radix[board.getLetter(i, j)] = true;
+                char c = board.getLetter(i, j);
+                if (c == 'Q') radix['U']++;
+                radix[c]++;
             }
         }
+
+
 
         // returned iterable
         Queue<String> queue = new Queue<>();
 
-        String str = ConstructString(board);
+        String[] strings = ConstructString(board);
 
-        int count = 0;
+        // sort the strings.
+
+        Quick3string.sort(strings);
+
+//        System.out.println("String constructed");
+
+
+
+//        int count = 0;
         for (String word:dictionary){
             // if the board does not contain the character.
             // or the string is longer than 16.
-            if (word.length() < 3 || word.length() > 16 || !contain(word)) continue;
-            count++;
-            BoyerMoore b = new BoyerMoore(word);
-            // found
-            if(b.search(str)<str.length()) queue.enqueue(word);
+            if (word.length() < 3 || word.length() > 16 ||!contain(word)) continue;
+            else if (BinarySearch(strings, word, 0, strings.length) != -1) queue.enqueue(word);
+
+
+//            count ++;
+//            System.out.println(word);
+//
+//            System.out.println(count);
         }
 
 //        System.out.println(dictionary.length);
@@ -60,46 +76,66 @@ public class BoggleSolver
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
         // todo binary search to find if the dict contain the word.
-        return switch (word.length()) {
-            case 1, 2 -> 0;
-            case 3, 4 -> 1;
-            case 5 -> 2;
-            case 6 -> 3;
-            case 7 -> 5;
-            // eight or more
-            default -> 11;
-        };
+        switch (word.length()){
+            case 0:
+            case 1:
+            case 2:
+                return 0;
+            case 3:
+            case 4:
+                return 1;
+            case 5:
+                return 2;
+            case 6:
+                return 3;
+            case 7:
+                return 5;
+            default:
+                return 11;
+        }
+
+
     }
 
     private boolean contain(String str){
         // if the chars in the string are contained in the board
+        int[] radix_replica = new int[256];
         for(char c:str.toCharArray()){
-            if (!radix[c]) return false;
+            radix_replica[c]++;
+            if (radix_replica[c] > radix[c]) return false;
         }
         return true;
     }
 
-    private String ConstructString(BoggleBoard board){
-        StringBuilder str = new StringBuilder();
-        HashSet<String> strs = new HashSet<>();
+
+
+    private int BinarySearch(String[] strings, String key, int lo, int hi){
+        // not found
+        if(lo>=hi) return -1;
+        int mid = lo + (hi - lo)/2;
+        for(int i = 0; i < key.length(); i++){
+            if(i >= strings[mid].length() || strings[mid].charAt(i)>key.charAt(i)){ return BinarySearch(strings, key, lo, mid); }
+            else if(strings[mid].charAt(i)<key.charAt(i)){ return BinarySearch(strings, key, mid + 1, hi); }
+//            else continue;
+        }
+        // found
+        return mid;
+    }
+
+    private String[] ConstructString(BoggleBoard board){
+        ArrayList<String> strings = new ArrayList<>();
         for(int i = 0; i< board.cols(); i++){
             for(int j = 0; j< board.rows(); j++) {
                 boolean[][] visited = new boolean[m][n];
                 ArrayList<Character> arrayList = new ArrayList<>();
-                dfs(i, j, arrayList, strs, visited);
+                dfs(i, j, arrayList, strings, visited);
             }
         }
 
-        // constructing the str
-        for(String s : strs){
-            str.append(" ");
-            str.append(s);
-        }
-
-        return str.toString();
+        return strings.toArray(new String[0]);
     }
 
-    private void dfs(int i, int j, ArrayList<Character> arrayList, HashSet<String> strs, boolean[][] visited){
+    private void dfs(int i, int j, ArrayList<Character> arrayList, ArrayList<String> strings, boolean[][] visited){
 //        System.out.println(i);
 //        System.out.println(j);
         arrayList.add(board.getLetter(i, j));
@@ -116,7 +152,7 @@ public class BoggleSolver
                 if (!visited[adj_i][adj_j]) {
                     // do dfs further
                     end = false;
-                    dfs(adj_i, adj_j, arrayList, strs, visited);
+                    dfs(adj_i, adj_j, arrayList, strings, visited);
                 }
             }
         }
@@ -128,10 +164,9 @@ public class BoggleSolver
             for(char c: arrayList){
                 if (c == 'Q'){
                     s.append("QU");
-                }
-                s.append(c);
+                }else s.append(c);
             }
-            strs.add(s.toString());
+            strings.add(s.toString());
         }
         visited[i][j] = false;
         arrayList.remove(arrayList.size()-1);
