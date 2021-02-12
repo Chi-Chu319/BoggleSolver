@@ -20,7 +20,7 @@ public class BoggleSolver
 //        }
 //    }
 
-//    private int[] radix = new int[256];
+    //    private int[] radix = new int[256];
     private TST<Integer> dictionary;
 
 
@@ -122,7 +122,13 @@ public class BoggleSolver
             }
         }
         if (end){
-            String match = dictionary.longestPrefixOf(chars.toString());
+            StringBuilder s = new StringBuilder();
+            for(char c: chars.toString().toCharArray()){
+                if (c == 'Q'){
+                    s.append("QU");
+                }else s.append(c);
+            }
+            String match = dictionary.longestPrefixOf(s.toString());
             while(match != null && match.length()>=3){
                 strings.add(match);
                 match = dictionary.longestPrefixOf(match.substring(0, match.length()-1));
