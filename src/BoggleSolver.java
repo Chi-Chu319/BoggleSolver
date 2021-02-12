@@ -1,15 +1,71 @@
+import edu.princeton.cs.algs4.Bag;
 import edu.princeton.cs.algs4.Queue;
-import edu.princeton.cs.algs4.Quick3string;
 
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.HashSet;
 
 
 public class BoggleSolver
 {
 
+    private class GraphLite{
+        private final int m;
+        private final int n;
+        private final ArrayList<Bag<Node>> adj;
+
+        private class Node{
+            private final int i;
+            private final int j;
+
+            public Node(int i, int j){
+                this.i = i;
+                this.j = j;
+            }
+            public int i() {return i;}
+            public int j() {return j;}
+        }
+
+        public GraphLite(int m, int n){
+            this.m = m;
+            this.n = n;
+
+            // constructing node array
+            Node[][] nodes = new Node[m][n];
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    nodes[i][j] = new Node(i, j);
+                }
+            }
+            adj = new ArrayList<>(m*n);
+            for(int i = 0; i < m*n; i++) adj.add(new Bag<>());
+
+
+            for(int i = 0; i < m; i++){
+                for(int j = 0; j < n; j++){
+                    Bag<Node> bag = new Bag<>();
+
+                    int bound_i = Math.min(i + 2, m);
+                    int bound_j = Math.min(j + 2, n);
+
+
+                    for (int adj_i = Math.max(0, i - 1); adj_i < bound_i; adj_i++) {
+                        for (int adj_j = Math.max(0, j - 1); adj_j < bound_j; adj_j++) {
+                            if (adj_i == i && adj_j == j) continue;
+                            bag.add(nodes[adj_i][adj_j]);
+                        }
+                    }
+                    adj.set(i*n+j, bag);
+                }
+            }
+        }
+
+        public Bag<Node> adj(int i, int j) {
+            return adj.get(i*n+j);
+        }
+    }
+
+    // modified TST
     private static class TST<Value> {
         private int n;              // size
         private Node<Value> root;   // root of TST
@@ -234,12 +290,17 @@ public class BoggleSolver
         int m = board.rows();
         int n = board.cols();
 
+        // constructing graph.
+        GraphLite g = new GraphLite(m, n);
+
+
+
         HashSet<String> strings = new HashSet<>();
         for(int i = 0; i< m; i++){
             for(int j = 0; j< n; j++) {
                 boolean[][] visited = new boolean[m][n];
                 StringBuilder chars = new StringBuilder();
-                dfs(i, j, chars, strings, visited, board);
+                dfs(i, j, chars, strings, visited, board, g);
             }
         }
 
@@ -262,6 +323,7 @@ public class BoggleSolver
         else return 0;
     }
 
+    // computing scores for words in dict
     private int score(String word){
         switch (word.length()){
             case 0:
@@ -283,7 +345,7 @@ public class BoggleSolver
     }
 
 
-    private void dfs(int i, int j, StringBuilder chars, HashSet<String> strings, boolean[][] visited, BoggleBoard board){
+    private void dfs(int i, int j, StringBuilder chars, HashSet<String> strings, boolean[][] visited, BoggleBoard board, GraphLite g){
 
         visited[i][j] = true;
         char c = board.getLetter(i, j);
@@ -304,17 +366,8 @@ public class BoggleSolver
             if(chars.length() >= 3 && dictionary.contains(chars.toString())) strings.add(chars.toString());
 
 
-            int bound_i = Math.min(i + 2, board.rows());
-            int bound_j = Math.min(j + 2, board.cols());
-
-
-            for (int adj_i = Math.max(0, i - 1); adj_i < bound_i; adj_i++) {
-                for (int adj_j = Math.max(0, j - 1); adj_j < bound_j; adj_j++) {
-                    if (adj_i == i && adj_j == j) continue;
-                    if (!visited[adj_i][adj_j]) {
-                        dfs(adj_i, adj_j, chars, strings, visited, board);
-                    }
-                }
+            for(GraphLite.Node n : g.adj(i, j)){
+                if (!visited[n.i()][n.j()]) dfs(n.i(), n.j(), chars, strings, visited, board, g);
             }
 
         }
