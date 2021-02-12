@@ -5,10 +5,19 @@ import edu.princeton.cs.algs4.TrieSET;
 import edu.princeton.cs.algs4.TrieST;
 
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
 
 
 public class BoggleSolver
 {
+
+//    private class Trie<T> extends TrieST<T>{
+//        @Override
+//        public boolean contains(String key) {
+//            return super.contains(key);
+//        }
+//    }
 
 //    private int[] radix = new int[256];
     private TrieST<Integer> dictionary;
@@ -29,7 +38,7 @@ public class BoggleSolver
         int m = board.cols();
         int n = board.rows();
 
-        ArrayList<String> strings = new ArrayList<>();
+        HashSet<String> strings = new HashSet<>();
         for(int i = 0; i< m; i++){
             for(int j = 0; j< m; j++) {
                 boolean[][] visited = new boolean[m][n];
@@ -38,7 +47,16 @@ public class BoggleSolver
             }
         }
 
-        return strings;
+        ArrayList<String> stringList = new ArrayList<>();
+        for (String s:strings) stringList.add(s);
+
+        String[] array = stringList.toArray(new String[0]);
+
+        Quick3string.sort(array);
+
+        stringList = new ArrayList(Arrays.asList(array));
+
+        return stringList;
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -69,17 +87,6 @@ public class BoggleSolver
 
     }
 
-//    private boolean contain(String str){
-//        // if the chars in the string are contained in the board
-//        int[] radix_replica = new int[256];
-//        for(char c:str.toCharArray()){
-//            radix_replica[c]++;
-//            if (radix_replica[c] > radix[c]) return false;
-//        }
-//        return true;
-//    }
-
-
     private int BinarySearch(String[] strings, String key, int lo, int hi){
         // not found
         if(lo>=hi) return -1;
@@ -93,8 +100,7 @@ public class BoggleSolver
         return mid;
     }
 
-
-    private void dfs(int i, int j, StringBuilder chars, ArrayList<String> strings, boolean[][] visited, BoggleBoard board){
+    private void dfs(int i, int j, StringBuilder chars, HashSet<String> strings, boolean[][] visited, BoggleBoard board){
 //        System.out.println(i);
 //        System.out.println(j);
         chars.append(board.getLetter(i, j));
@@ -117,11 +123,11 @@ public class BoggleSolver
         }
         if (end){
             String match = dictionary.longestPrefixOf(chars.toString());
-            if (match != null && match.length()>=3) strings.add(chars.toString());
+            if (match != null && match.length()>=3) strings.add(match);
         }
 
-        chars = new StringBuilder(chars.substring(0, chars.length()-1));
-
+        visited[i][j] = false;
+        chars.deleteCharAt(chars.length()-1);
     }
 
     private static void main(String[] args) {

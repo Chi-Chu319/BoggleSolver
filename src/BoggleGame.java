@@ -37,7 +37,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.KeyListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseListener;
-import java.io.File;
 import java.util.LinkedHashSet;
 import java.util.TreeSet;
 import java.util.Timer;
@@ -384,31 +383,31 @@ public class BoggleGame extends JFrame {
         );
 
         // all words in shakespeare
-        In in1 = new In("./dictionary/dictionary-shakespeare.txt");
+        In in1 = new In("dictionaries/dictionary-shakespeare.txt");
         shakespeareDictionary = new SET<String>();
         for (String s : in1.readAllStrings())
             shakespeareDictionary.add(s);
 
         // all words in shakespeare
-        In in2 = new In("./dictionary/dictionary-nursery.txt");
+        In in2 = new In("dictionaries/dictionary-nursery.txt");
         nurseryDictionary = new SET<String>();
         for (String s : in2.readAllStrings())
             nurseryDictionary.add(s);
 
         // about 20K common words
-        In in3 = new In("./dictionary/dictionary-common.txt");
+        In in3 = new In("dictionaries/dictionary-common.txt");
         commonDictionary = new SET<String>();
         for (String s : in3.readAllStrings())
             commonDictionary.add(s);
 
         // all words in Algorithms 4/e
-        In in4 = new In("./dictionary/dictionary-algs4.txt");
+        In in4 = new In("dictionaries/dictionary-algs4.txt");
         algs4Dictionary = new SET<String>();
         for (String s : in4.readAllStrings())
             algs4Dictionary.add(s);
 
         // dictionary
-        In in = new In("./dictionary/dictionary-yawl.txt");
+        In in = new In("dictionaries/dictionary-yawl.txt");
         String[] dictionary = in.readAllStrings();
 
         // create the Boggle solver with the given dictionary
