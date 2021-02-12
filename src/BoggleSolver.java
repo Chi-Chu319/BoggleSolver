@@ -217,7 +217,7 @@ public class BoggleSolver
     }
 
 
-    private TST<Integer> dictionary;
+    private final TST<Integer> dictionary;
 
 
     // Initializes the data structure using the given array of strings as the dictionary.
@@ -329,7 +329,4 @@ public class BoggleSolver
         }
     }
 
-    private static void main(String[] args) {
-
-    }
 }
