@@ -1,5 +1,33 @@
-4 4
-S N R T
-O I E L
-E Qu T T
-R S A T
+32 1
+S
+E
+N
+A
+H
+T
+E
+O
+R
+O
+L
+H
+C
+I
+R
+T
+L
+Y
+N
+E
+H
+P
+I
+D
+O
+R
+O
+L
+H
+C
+I
+D
