@@ -1,6 +1,7 @@
 import edu.princeton.cs.algs4.In;
 import edu.princeton.cs.algs4.Queue;
 import edu.princeton.cs.algs4.Quick3string;
+import edu.princeton.cs.algs4.TST;
 import edu.princeton.cs.algs4.TrieSET;
 import edu.princeton.cs.algs4.TrieST;
 
@@ -20,14 +21,13 @@ public class BoggleSolver
 //    }
 
 //    private int[] radix = new int[256];
-    private TrieST<Integer> dictionary;
-
+    private TST<Integer> dictionary;
 
 
     // Initializes the data structure using the given array of strings as the dictionary.
     // (You can assume each word in the dictionary contains only the uppercase letters A through Z.)
     public BoggleSolver(String[] dictionary){
-        this.dictionary = new TrieST<>();
+        this.dictionary = new TST<>();
         for (String s: dictionary) this.dictionary.put(s, score(s));
     }
 
@@ -47,16 +47,16 @@ public class BoggleSolver
             }
         }
 
-        ArrayList<String> stringList = new ArrayList<>();
-        for (String s:strings) stringList.add(s);
+//        ArrayList<String> stringList = new ArrayList<>();
+//        for (String s:strings) stringList.add(s);
+//
+//        String[] array = stringList.toArray(new String[0]);
+//
+//        Quick3string.sort(array);
+//
+//        stringList = new ArrayList(Arrays.asList(array));
 
-        String[] array = stringList.toArray(new String[0]);
-
-        Quick3string.sort(array);
-
-        stringList = new ArrayList(Arrays.asList(array));
-
-        return stringList;
+        return strings;
     }
 
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
@@ -123,10 +123,14 @@ public class BoggleSolver
         }
         if (end){
             String match = dictionary.longestPrefixOf(chars.toString());
-            if (match != null && match.length()>=3) strings.add(match);
+            while(match != null && match.length()>=3){
+                strings.add(match);
+                match = dictionary.longestPrefixOf(match.substring(0, match.length()-1));
+            }
         }
 
         visited[i][j] = false;
+        if(chars.charAt(chars.length()-1) == 'U'){}
         chars.deleteCharAt(chars.length()-1);
     }
 
