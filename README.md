@@ -1,6 +1,6 @@
 # BoggleSolver
 
-Buggle solver implemented using DFS and 26-ways-Tries.
+Buggle solver implemented using DFS and 26-ways-Trie.
 
 ## How to use:
 
