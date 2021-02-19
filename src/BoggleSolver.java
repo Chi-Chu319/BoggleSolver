@@ -8,7 +8,7 @@ import java.util.HashSet;
 
 public class BoggleSolver
 {
-
+    // Lite version of graph which aids in searching for adjs of a boggle cell.
     private class GraphLite{
         private final int m;
         private final int n;
@@ -65,7 +65,7 @@ public class BoggleSolver
         }
     }
 
-    // modified Trie
+    // modified 26-ways Trie (Capitalized English characters).
     private static class TrieSTLite {
         private static final int R = 26;        // extended ASCII
 
@@ -310,7 +310,6 @@ public class BoggleSolver
     }
 
 
-
     // Returns the set of all valid words in the given Boggle board, as an Iterable.
     public Iterable<String> getAllValidWords(BoggleBoard board){
         int m = board.rows();
@@ -345,11 +344,12 @@ public class BoggleSolver
     // Returns the score of the given word if it is in the dictionary, zero otherwise.
     // (You can assume the word contains only the uppercase letters A through Z.)
     public int scoreOf(String word){
+        // Searching the score in the Trie.
         if (dictionary.contains(word)) return dictionary.get(word);
         else return 0;
     }
 
-    // computing scores for words in dict
+    // computing scores for words in dict.
     private int score(String word){
         switch (word.length()){
             case 0:
@@ -370,9 +370,8 @@ public class BoggleSolver
         }
     }
 
-
+    // Run the DFS on a boggle board.
     private void dfs(int i, int j, StringBuilder chars, HashSet<String> strings, boolean[][] visited, BoggleBoard board, GraphLite g){
-
         visited[i][j] = true;
         char c = board.getLetter(i, j);
         if (c == 'Q'){
